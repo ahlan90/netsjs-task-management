@@ -1,6 +1,6 @@
 import { CreateTaskDto } from './dto/create-task.dto';
 import { TasksService } from './tasks.service';
-import { Controller, Get, Post, Body, Param, Delete, Patch, UsePipes, ValidationPipe, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, UsePipes, ValidationPipe, Query, ParseIntPipe, UseGuards, Logger } from '@nestjs/common';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
 import { Task } from './task.entity';
@@ -13,6 +13,8 @@ import { User } from 'src/auth/user.entity';
 @UseGuards(AuthGuard())
 export class TasksController {
   
+  private logger = new Logger('TaskController');
+
   constructor(private tasksService: TasksService) {}
 
   @Get()
@@ -20,6 +22,7 @@ export class TasksController {
     @Query(ValidationPipe) filterDto: GetTasksFilterDto,
     @GetUser() user: User
   ) {
+    this.logger.log(`User "${user.username}" getting all tasks`);
     return this.tasksService.getTasks(filterDto, user);
   }
 
